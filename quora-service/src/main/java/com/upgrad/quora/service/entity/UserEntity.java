@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -37,8 +39,8 @@ CONTACTNUMBER        VARCHAR(30)
 @Table(name = "USERS")
 @NamedQueries(
         {
-                @NamedQuery(name = "deleteUserById", query = "delete from UserEntity u where u.id = :ids"),
-                @NamedQuery(name = "userById", query = "select u from UserEntity u where u.id = :id"),
+                @NamedQuery(name = "deleteUserByuuid", query = "DELETE FROM UserEntity u WHERE u.uuid = :ids"),
+                @NamedQuery(name = "userById", query = "select u from UserEntity u where u.uuid = :id"),
                 @NamedQuery(name = "userByUname", query = "select u from UserEntity u where u.userName =:username"),
                 @NamedQuery(name = "getAllUsers", query = "SELECT u from UserEntity u"),
 //                @NamedQuery(name = "userAuthTokenByAccessToken", query = "SELECT u from UserEntity u"),
@@ -49,12 +51,13 @@ public class UserEntity implements Serializable {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
 
     @Column(name = "UUID")
     @NotNull
     @Size(max = 200)
+
     private String uuid;
 
     @Column(name = "FIRSTNAME")
@@ -115,7 +118,7 @@ public class UserEntity implements Serializable {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
