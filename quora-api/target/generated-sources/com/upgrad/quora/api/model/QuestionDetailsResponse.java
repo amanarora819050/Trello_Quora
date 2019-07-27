@@ -49,10 +49,10 @@ public class QuestionDetailsResponse   {
   }
 
   /**
-   * Question content
+   * QuestionService content
    * @return content
   **/
-  @ApiModelProperty(required = true, value = "Question content")
+  @ApiModelProperty(required = true, value = "QuestionService content")
   @NotNull
 
 

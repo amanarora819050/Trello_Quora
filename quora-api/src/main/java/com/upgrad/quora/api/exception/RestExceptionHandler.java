@@ -47,4 +47,11 @@ public class RestExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidQuestionException.class)
+    public ResponseEntity<ErrorResponse> questionNotFoundException(InvalidQuestionException exc, WebRequest request) {
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.UNAUTHORIZED
+        );
+    }
+
 }

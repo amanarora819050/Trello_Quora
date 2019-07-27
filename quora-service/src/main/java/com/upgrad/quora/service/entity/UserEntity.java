@@ -51,7 +51,7 @@ public class UserEntity implements Serializable {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
 
     @Column(name = "UUID")
@@ -118,7 +118,7 @@ public class UserEntity implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -218,15 +218,6 @@ public class UserEntity implements Serializable {
         this.contactNumber = contactNumber;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return new EqualsBuilder().append(this, obj).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this).hashCode();
-    }
 
     @Override
     public String toString() {

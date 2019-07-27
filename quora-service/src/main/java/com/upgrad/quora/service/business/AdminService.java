@@ -69,4 +69,20 @@ public class AdminService {
         return deletedUserUuid;
 
     }
-}
+
+    public UserEntity getUser(final String authorization) throws UserNotFoundException, AuthorizationFailedException {
+
+        UserAuthTokenEntity userAuthTokenEntity = userAuthTokenDao.getUserAuthTokenByAccessToken(authorization);
+        if (userAuthTokenEntity == null) {
+            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+        } else if(userAuthTokenEntity.getLogoutAt()!=null ){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get user details");
+        } else {
+
+                return userAuthTokenEntity.getUser();
+            }
+
+        }
+
+    }
+
