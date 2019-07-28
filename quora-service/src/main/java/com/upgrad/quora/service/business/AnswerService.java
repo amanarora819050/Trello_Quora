@@ -42,7 +42,7 @@ public class AnswerService {
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity createAnswer(String questionId,AnswerEntity answerEntity,String accessToken) throws UserNotFoundException,AuthorizationFailedException, InvalidQuestionException {
             AnswerEntity answer =null;
-            UserEntity userEntity = adminService.getUser(accessToken);
+            UserEntity userEntity = adminService.getUserMethod(accessToken,"createAnswer");
             QuestionEntity questionEntity=questionService.getQuestion(questionId);
 
             if(questionEntity == null){
@@ -63,7 +63,7 @@ public class AnswerService {
     @Transactional(propagation = Propagation.REQUIRED)
     public AnswerEntity editAnswerResp(String ansId,String accessToken,String newAnswerContent) throws UserNotFoundException,AuthorizationFailedException,AnswerNotFoundException{
 
-        UserEntity userEntity = adminService.getUser(accessToken);
+        UserEntity userEntity = adminService.getUserMethod(accessToken,"editAnswer");
         AnswerEntity answer=answerDao.getAnswerById(ansId);
         AnswerEntity editedAns=null;
 
@@ -88,7 +88,7 @@ public class AnswerService {
     @Transactional(propagation = Propagation.REQUIRED)
     public String deleteAnswer(String answerId,String accessToken) throws UserNotFoundException,AuthorizationFailedException,AnswerNotFoundException{
 
-        UserEntity userEntity = adminService.getUser(accessToken);
+        UserEntity userEntity = adminService.getUserMethod(accessToken,"deleteAnswer");
         AnswerEntity answer = answerDao.getAnswerById(answerId);
         String deletedAnswerUuid=null;
         if(answer==null){
@@ -102,8 +102,12 @@ public class AnswerService {
         return deletedAnswerUuid;
     }
 
-    public List<AnswerEntity> getAllAnswerByQuestionID(String uuid){
+    public List<AnswerEntity> getAllAnswerByQuestionID(String uuid) throws InvalidQuestionException {
         QuestionEntity questionEntity = questionService.getQuestion(uuid);
+
         return answerDao.getAllAnswerByQuestionID(questionEntity.getId());
+
+
+
     }
 }

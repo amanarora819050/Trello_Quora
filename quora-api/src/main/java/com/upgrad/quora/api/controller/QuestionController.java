@@ -28,7 +28,7 @@ public class QuestionController {
     @RequestMapping(method = RequestMethod.POST, path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("authorization") final String authorization, QuestionRequest questionRequest) throws UserNotFoundException, AuthorizationFailedException {
         QuestionResponse questionResponse = new QuestionResponse();
-        final UserEntity userEntity = adminService.getUser(authorization);
+        final UserEntity userEntity = adminService.getUserMethod(authorization,"createQuestion");
         String questionId = questionService.createQuestion(questionRequest.getContent(), userEntity);
         questionResponse.setStatus("QUESTION CREATED");
         questionResponse.setId(questionId);
@@ -38,7 +38,7 @@ public class QuestionController {
     @RequestMapping(method = RequestMethod.GET, path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionEntity>> getAllQuestions(@RequestHeader("authorization") final String authorization) throws UserNotFoundException, AuthorizationFailedException {
         ArrayList<QuestionDetailsResponse> questionResponse = new ArrayList<QuestionDetailsResponse>();
-        final UserEntity userEntity = adminService.getUser(authorization);
+        final UserEntity userEntity = adminService.getUserMethod(authorization,"getAllQuestions");
         List<QuestionEntity> questionEntities = questionService.getAllQuestion();
         return new ResponseEntity<List<QuestionEntity>>(questionEntities, HttpStatus.CREATED);
     }
@@ -46,7 +46,7 @@ public class QuestionController {
     @RequestMapping(method = RequestMethod.PUT, path = "/question/edit/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionEditResponse> editQuestion(@PathVariable("questionId") String questionId, @RequestHeader("authorization") final String authorization, QuestionEditRequest questionEditRequest) throws UserNotFoundException, AuthorizationFailedException, InvalidQuestionException {
         QuestionEditResponse questionEditResponse = new QuestionEditResponse();
-        final UserEntity userEntity = adminService.getUser(authorization);
+        final UserEntity userEntity = adminService.getUserMethod(authorization,"editQuestionContent");
         QuestionEntity questionEntity = questionService.getQuestion(questionId);
         if (questionEntity == null) {
             throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
@@ -67,7 +67,7 @@ public class QuestionController {
     @RequestMapping(method = RequestMethod.DELETE, path = "/question/delete/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionDeleteResponse> deleteQuestion(@PathVariable("questionId") String questionId, @RequestHeader("authorization") final String authorization) throws UserNotFoundException, AuthorizationFailedException, InvalidQuestionException {
         QuestionDeleteResponse questionDeleteResponse = new QuestionDeleteResponse();
-        final UserEntity userEntity = adminService.getUser(authorization);
+        final UserEntity userEntity = adminService.getUserMethod(authorization,"deleteQuestion");
         QuestionEntity questionEntity = questionService.getQuestion(questionId);
         if (questionEntity == null) {
             throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");
@@ -85,7 +85,7 @@ public class QuestionController {
     @RequestMapping(method = RequestMethod.GET, path = "question/all/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionEntity>> getAllQuestions(@PathVariable("userId")String userId,@RequestHeader("authorization") final String authorization) throws UserNotFoundException, AuthorizationFailedException {
         ArrayList<QuestionDetailsResponse> questionResponse = new ArrayList<QuestionDetailsResponse>();
-        final UserEntity userEntity = adminService.getUser(authorization);
+        final UserEntity userEntity = adminService.getUserMethod(authorization,"getAllQuestionsByUser");
         List<QuestionEntity> questionEntities = questionService.getAllQuestionBYUser(userEntity.getId());
         return new ResponseEntity<List<QuestionEntity>>(questionEntities, HttpStatus.OK);
     }

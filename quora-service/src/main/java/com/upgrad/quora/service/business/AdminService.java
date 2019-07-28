@@ -70,14 +70,40 @@ public class AdminService {
 
     }
 
-    public UserEntity getUser(final String authorization) throws UserNotFoundException, AuthorizationFailedException {
+    public UserEntity getUserMethod(final String authorization,String methodName) throws UserNotFoundException, AuthorizationFailedException {
 
         UserAuthTokenEntity userAuthTokenEntity = userAuthTokenDao.getUserAuthTokenByAccessToken(authorization);
         if (userAuthTokenEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-        } else if(userAuthTokenEntity.getLogoutAt()!=null ){
-            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get user details");
-        } else {
+        }
+        else if(userAuthTokenEntity.getLogoutAt()!=null &&methodName.equals("createAnswer")){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to post an answer");
+        }
+        else if(userAuthTokenEntity.getLogoutAt()!=null &&methodName.equals("editAnswer")){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to edit an answer");
+        }
+        else if(userAuthTokenEntity.getLogoutAt()!=null &&methodName.equals("deleteAnswer")){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to delete an answer");
+        }
+        else if(userAuthTokenEntity.getLogoutAt()!=null &&methodName.equals("getAllAnswertoQuestion")){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get the answers");
+        }
+        else if(userAuthTokenEntity.getLogoutAt()!=null &&methodName.equals("createQuestion")){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to post a question");
+        }
+        else if(userAuthTokenEntity.getLogoutAt()!=null &&methodName.equals("getAllQuestions")){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get all questions");
+        }
+        else if(userAuthTokenEntity.getLogoutAt()!=null &&methodName.equals("editQuestionContent")){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to edit the question");
+        }
+        else if(userAuthTokenEntity.getLogoutAt()!=null &&methodName.equals("deleteQuestion")){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to delete a question");
+        }
+        else if(userAuthTokenEntity.getLogoutAt()!=null &&methodName.equals("getAllQuestionsByUser")){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get all questions posted by a specific user");
+        }
+        else {
 
             return userAuthTokenEntity.getUser();
         }

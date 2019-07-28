@@ -55,12 +55,16 @@ public class AnswerDao {
     }
     public List<AnswerEntity> getAllAnswerByQuestionID(long uuid){
 
+        try {
+            TypedQuery<AnswerEntity> query = entityManager.createNamedQuery("getAllAnswerQuestionId", AnswerEntity.class);
+            query.setParameter("id", uuid);
+            List<AnswerEntity> resultList = query.getResultList();
 
-        TypedQuery<AnswerEntity> query =entityManager.createNamedQuery("getAllAnswerQuestionId",AnswerEntity.class);
-        query.setParameter("id",uuid);
-        List<AnswerEntity> resultList = query.getResultList();
-
-        return  resultList;
+            return resultList;
+        }
+        catch (NoResultException e){
+            return null;
+        }
     }
 
 }

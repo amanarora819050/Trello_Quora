@@ -3,6 +3,8 @@ package com.upgrad.quora.service.business;
 import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserEntity;
+import com.upgrad.quora.service.exception.AuthorizationFailedException;
+import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,15 +41,29 @@ public class QuestionService {
         return questionDao.editQuestion(questionId,content);
 
     }
-    public QuestionEntity getQuestion(String uuid){
-        return questionDao.getQuestion(uuid);
+    public QuestionEntity getQuestion(String uuid) throws InvalidQuestionException {
+        QuestionEntity questionEntity = questionDao.getQuestion(uuid);
+        if(questionEntity ==null){
+            throw new InvalidQuestionException("QUES-001","The question with entered uuid whose details are to be seen does not exist");
+        }
+        else {
+            return questionEntity;
+        }
     }
 
     public boolean deleteQuestion(String uuid){
         return questionDao.deleteQuestion(uuid);
     }
 
-    public List<QuestionEntity> getAllQuestionBYUser(long uuid){
-        return questionDao.getAllQuestionBYUser(uuid);
+    public List<QuestionEntity> getAllQuestionBYUser(long uuid) throws AuthorizationFailedException {
+
+        List<QuestionEntity> questionEntities =questionDao.getAllQuestionBYUser(uuid);
+
+        if(questionEntities==null){
+            throw new AuthorizationFailedException("USR-001","User with entered uuid whose question details are to be seen does not exist");
+        }
+        else{
+            return questionEntities;
+        }
     }
 }
