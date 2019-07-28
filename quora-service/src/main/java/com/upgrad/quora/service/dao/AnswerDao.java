@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 @Repository
 public class AnswerDao {
@@ -34,6 +36,24 @@ public class AnswerDao {
 
     public AnswerEntity updateAnswer(final AnswerEntity updatedAnswerEntity) {
        return entityManager.merge(updatedAnswerEntity);
+    }
+
+    @Transactional
+    public String deleteAnswerById(String answerUuId) {
+        try {
+
+            Query query=entityManager.createQuery("DELETE FROM AnswerEntity u WHERE u.uuid = :answerUuId");
+            query.setParameter("answerUuId", answerUuId);
+            int result= query.executeUpdate();
+
+
+
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return answerUuId;
     }
 
 
