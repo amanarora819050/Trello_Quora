@@ -1,16 +1,13 @@
 package com.upgrad.quora.service.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Objects;
 
 
 //Note that the object of this class maps with database table "users"
@@ -39,8 +36,8 @@ CONTACTNUMBER        VARCHAR(30)
 @Table(name = "USERS")
 @NamedQueries(
         {
-                @NamedQuery(name = "deleteUserByuuid", query = "DELETE FROM UserEntity u WHERE u.uuid = :ids"),
-                @NamedQuery(name = "userById", query = "select u from UserEntity u where u.uuid = :id"),
+                @NamedQuery(name = "deleteUserById", query = "delete from UserEntity u where u.id = :ids"),
+                @NamedQuery(name = "userById", query = "select u from UserEntity u where u.id = :id"),
                 @NamedQuery(name = "userByUname", query = "select u from UserEntity u where u.userName =:username"),
                 @NamedQuery(name = "getAllUsers", query = "SELECT u from UserEntity u"),
 //                @NamedQuery(name = "userAuthTokenByAccessToken", query = "SELECT u from UserEntity u"),
@@ -51,13 +48,12 @@ public class UserEntity implements Serializable {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
 
 
     @Column(name = "UUID")
     @NotNull
     @Size(max = 200)
-
     private String uuid;
 
     @Column(name = "FIRSTNAME")
@@ -118,7 +114,7 @@ public class UserEntity implements Serializable {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -218,6 +214,30 @@ public class UserEntity implements Serializable {
         this.contactNumber = contactNumber;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserEntity that = (UserEntity) o;
+        return id == that.id &&
+                uuid.equals(that.uuid) &&
+                firstName.equals(that.firstName) &&
+                lastName.equals(that.lastName) &&
+                userName.equals(that.userName) &&
+                email.equals(that.email) &&
+                password.equals(that.password) &&
+                salt.equals(that.salt) &&
+                Objects.equals(country, that.country) &&
+                Objects.equals(aboutMe, that.aboutMe) &&
+                Objects.equals(dob, that.dob) &&
+                Objects.equals(role, that.role) &&
+                Objects.equals(contactNumber, that.contactNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, uuid, firstName, lastName, userName, email, password, salt, country, aboutMe, dob, role, contactNumber);
+    }
 
     @Override
     public String toString() {

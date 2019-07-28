@@ -4,7 +4,6 @@ import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.SignUpRestrictedException;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.List;
@@ -46,24 +45,25 @@ public class UserDao {
         }
     }
 
-    public UserEntity getUserById(final String uuid) {
+    public UserEntity getUserById(final Integer userId) {
         try {
-            return entityManager.createNamedQuery("userById", UserEntity.class).setParameter("id", uuid).getSingleResult();
+            return entityManager.createNamedQuery("userById", UserEntity.class).setParameter("id", userId).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }
     }
-    @Transactional
-    public void deleteUserById(final String userId) {
+
+    public void deleteUserById(final Integer userId) {
 
         UserEntity userEntity;
         try {
 
-       Query query=entityManager.createQuery("DELETE FROM UserEntity u WHERE u.uuid = :ids");
-         query.setParameter("ids", userId);
-        int result= query.executeUpdate();
+            entityManager.createNamedQuery("deleteUserById", UserEntity.class)
+                    .setParameter(1, userId)
+                    .executeUpdate();
 
-
+            //Execute the delete query
+            entityManager.flush();
 
         }
         catch(Exception e) {

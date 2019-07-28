@@ -1,65 +1,51 @@
 package com.upgrad.quora.service.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.time.ZonedDateTime;
-
+import java.util.Objects;
 
 @Entity
-@Table(name = "question")
-
-
+@Table(name ="QUESTION")
 @NamedQueries(
         {
-                @NamedQuery(name ="getAllQuestions", query ="SELECT u from QuestionEntity u" ),
-                @NamedQuery(name = "getAllQuestionByUSerId", query = "select u from QuestionEntity u where u.userId = :id"),
+                @NamedQuery(name = "questionById", query = "select u from QuestionEntity u where u.id = :id"),
+        })
+public class QuestionEntity {
 
-        }
-)
-public class QuestionEntity implements Serializable {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
 
     @Column(name = "UUID")
     @NotNull
     @Size(max = 200)
     private String uuid;
 
-    @Column(name="content")
+    @Column(name = "CONTENT")
     @NotNull
-    @Size(max =500)
-    private String content;
+    @Size(max = 255)
+    private String questionContent;
 
-
-    @Column(name="user_id")
+    @Column(name = "DATE")
     @NotNull
-    private long userId;
+    private ZonedDateTime questionAt;
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    @Column(name = "date")
+    @ManyToOne
     @NotNull
-    private ZonedDateTime date;
+    @JoinColumn(name = "USER_ID")
+    private UserEntity user;
 
-
-
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -71,22 +57,50 @@ public class QuestionEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public String getContent() {
-        return content;
+    public String getQuestionContent() {
+        return questionContent;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setQuestionContent(String questionContent) {
+        this.questionContent = questionContent;
     }
 
-
-
-
-    public ZonedDateTime getDate() {
-        return date;
+    public ZonedDateTime getQuestionAt() {
+        return questionAt;
     }
 
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
+    public void setQuestionAt(ZonedDateTime questionAt) {
+        this.questionAt = questionAt;
     }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        QuestionEntity that = (QuestionEntity) o;
+        return id == that.id &&
+                uuid.equals(that.uuid) &&
+                questionContent.equals(that.questionContent) &&
+                questionAt.equals(that.questionAt) &&
+                user.equals(that.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, uuid, questionContent, questionAt, user);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    }
+
 }

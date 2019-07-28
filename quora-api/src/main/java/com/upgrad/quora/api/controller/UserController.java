@@ -64,6 +64,7 @@ public class UserController {
         String decodedText = new String(decode);
         String[] decodedArray = decodedText.split(":");
 
+
         UserAuthTokenEntity userAuthToken = authenticationService.authenticate(decodedArray[0] , decodedArray[1]);
 
         UserEntity user = userAuthToken.getUser();
