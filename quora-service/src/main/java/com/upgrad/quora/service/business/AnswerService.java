@@ -7,7 +7,7 @@ import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
-import com.upgrad.quora.service.entity.UserEntity;
+import com.upgrad.quora.service.exception.AnswerNotFoundException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +34,11 @@ public class AnswerService {
 
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public AnswerEntity createAnswer(String questionId,AnswerEntity answerEntity,String[] decodedAuth) throws AuthorizationFailedException, InvalidQuestionException {
+    public AnswerEntity createAnswer(String questionId,AnswerEntity answerEntity,String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
 
-        String userName=decodedAuth[0];
-        UserEntity user= userDao.getUserByUsername(userName);
-        UserAuthTokenEntity userAuthTokenEntity = userAuthTokenDao.getUserAuthTokenByUser(user);
+        //String userName=decodedAuth[0];
+        //UserEntity user= userDao.getUserByUsername(userName);
+        UserAuthTokenEntity userAuthTokenEntity = userAuthTokenDao.getUserAuthTokenByAccessToken(accessToken);
         AnswerEntity answer=null;
 
         if(userAuthTokenEntity==null){
@@ -69,6 +69,35 @@ public class AnswerService {
 
         return answer;
 
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public AnswerEntity editAnswerResp(String ansId,String accessToken,String newAnswerContent) throws AuthorizationFailedException,AnswerNotFoundException{
+
+        UserAuthTokenEntity userAuthTokenEntity = userAuthTokenDao.getUserAuthTokenByAccessToken(accessToken);
+        AnswerEntity answer=answerDao.getAnswerById(Integer.parseInt(ansId));
+        AnswerEntity editedAns=null;
+
+        if(userAuthTokenEntity==null){
+            throw new AuthorizationFailedException("ATHR-001","User has not signed in");
+        } else if(userAuthTokenEntity.getLogoutAt() != null){
+            throw new AuthorizationFailedException("ATHR-002","User is signed out.Sign in first to edit an answer");
+        } else if(answer==null){
+            throw new AnswerNotFoundException("ANS-001","Entered answer uuid does not exist");
+        } else{
+
+            if(userAuthTokenEntity.getUser().getId()!=answer.getUser().getId()){
+                throw new AuthorizationFailedException("ATHR-003","Only the answer owner can edit the answer");
+            } else if(userAuthTokenEntity.getUser().getId()==answer.getUser().getId()){
+                answer.setAnswer(newAnswerContent);
+                editedAns=answerDao.updateAnswer(answer);
+
+            }
+
+
+        }
+
+        return editedAns;
     }
 
 }
