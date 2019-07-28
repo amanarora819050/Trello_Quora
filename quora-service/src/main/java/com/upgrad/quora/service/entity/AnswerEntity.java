@@ -13,7 +13,9 @@ import java.util.Objects;
 @Table(name ="ANSWER")
 @NamedQueries(
         {
-                @NamedQuery(name = "answerById", query = "select u from AnswerEntity u where u.id = :id"),
+                @NamedQuery(name = "answerById", query = "select u from AnswerEntity u where u.uuid = :id"),
+                @NamedQuery(name = "getAllAnswerQuestionId", query = "select u from AnswerEntity u where u.QuestionID = :id")
+
         })
 public class AnswerEntity {
 
@@ -35,15 +37,14 @@ public class AnswerEntity {
     @Column(name = "DATE")
     private ZonedDateTime answerAt;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "USER_ID")
-    private UserEntity user;
 
-    @ManyToOne
     @NotNull
-    @JoinColumn(name = "QUESTION_ID")
-    private QuestionEntity question;
+    @Column(name = "USER_ID")
+    private long userId;
+
+    @NotNull
+    @Column(name = "QUESTION_ID")
+    private long QuestionID;
 
     public int getId() {
         return id;
@@ -77,39 +78,20 @@ public class AnswerEntity {
         this.answerAt = answerAt;
     }
 
-    public UserEntity getUser() {
-        return user;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUser(UserEntity user) {
-
-        this.user = user;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
-    public QuestionEntity getQuestion() {
-        return question;
+    public long getQuestionID() {
+        return QuestionID;
     }
 
-    public void setQuestion(QuestionEntity question) {
-        this.question = question;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AnswerEntity that = (AnswerEntity) o;
-        return id == that.id &&
-                uuid.equals(that.uuid) &&
-                answer.equals(that.answer) &&
-                answerAt.equals(that.answerAt) &&
-                user.equals(that.user) &&
-                question.equals(that.question);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, uuid, answer, answerAt, user, question);
+    public void setQuestionID(long questionID) {
+        QuestionID = questionID;
     }
 
     @Override

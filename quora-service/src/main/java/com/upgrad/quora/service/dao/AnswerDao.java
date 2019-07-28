@@ -4,11 +4,9 @@ import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.*;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public class AnswerDao {
@@ -26,7 +24,7 @@ public class AnswerDao {
         entityManager.merge(updatedQuestionEntity);
     }
 
-    public AnswerEntity getAnswerById(final Integer id) {
+    public AnswerEntity getAnswerById(String id) {
         try {
             return entityManager.createNamedQuery("answerById", AnswerEntity.class).setParameter("id", id).getSingleResult();
         } catch (NoResultException nre) {
@@ -55,6 +53,14 @@ public class AnswerDao {
 
         return answerUuId;
     }
+    public List<AnswerEntity> getAllAnswerByQuestionID(long uuid){
 
+
+        TypedQuery<AnswerEntity> query =entityManager.createNamedQuery("getAllAnswerQuestionId",AnswerEntity.class);
+        query.setParameter("id",uuid);
+        List<AnswerEntity> resultList = query.getResultList();
+
+        return  resultList;
+    }
 
 }

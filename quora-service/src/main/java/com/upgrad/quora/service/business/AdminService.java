@@ -26,7 +26,7 @@ public class AdminService {
         } else if(userAuthTokenEntity.getLogoutAt()!=null ){
             throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get user details");
         } else {
-            UserEntity userEntity=userDao.getUserById(Integer.parseInt(id));
+            UserEntity userEntity=userDao.getUserById(id);
             if(userEntity==null) {
                 throw new UserNotFoundException("USR-001","User with entered uuid does not exist");
             } else {
@@ -47,16 +47,15 @@ public class AdminService {
             throw new AuthorizationFailedException("ATHR-002", "User is signed out");
         } else {
 
-            Long l = new Long(userAuthTokenEntity.getId());
 
-            UserEntity userEntity=userDao.getUserById(l.intValue());
+            UserEntity userEntity=userDao.getUserById(id);
 
             if(userEntity==null) {
                 throw new UserNotFoundException("USR-001","User with entered uuid does not exist");
             } else {
                 if(userEntity.getRole().equals("admin")){
 
-                    userDao.deleteUserById(Integer.parseInt(id));
+                    userDao.deleteUserById(id);
 
                 }else{
 
@@ -70,4 +69,19 @@ public class AdminService {
         return deletedUserUuid;
 
     }
+
+    public UserEntity getUser(final String authorization) throws UserNotFoundException, AuthorizationFailedException {
+
+        UserAuthTokenEntity userAuthTokenEntity = userAuthTokenDao.getUserAuthTokenByAccessToken(authorization);
+        if (userAuthTokenEntity == null) {
+            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+        } else if(userAuthTokenEntity.getLogoutAt()!=null ){
+            throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get user details");
+        } else {
+
+            return userAuthTokenEntity.getUser();
+        }
+
+    }
+
 }
